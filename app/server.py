@@ -7,9 +7,9 @@ from detection import Detector
 
 host = "127.0.0.1"
 port = 5000
-max_length = 65540
+max_length = 65000
 
-sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sock.bind((host, port))
 
 frame_info = None
@@ -17,6 +17,36 @@ buffer = None
 frame = None
 
 detector = Detector()
+
+
+def send_back(frame, address):
+    # convert to byte array
+    buffer = frame.tobytes()
+    # get size of the frame
+    buffer_size = len(buffer)
+
+    num_of_packs = 1
+    if buffer_size > max_length:
+        num_of_packs = math.ceil(buffer_size/max_length)
+
+    frame_info = {"packs": num_of_packs}
+
+    # send the number of packs to be expected
+    sock.sendto(pickle.dumps(frame_info), address)
+
+    left = 0
+    right = max_length
+
+    for i in range(num_of_packs):
+        # truncate data to send
+        data = buffer[left:right]
+        left = right
+        right += max_length
+
+        # send the frames accordingly
+        sock.sendto(data, address)
+
+    print("Server: sent", num_of_packs)
 
 def run():
     print("waiting for connection")
@@ -46,10 +76,7 @@ def run():
 
                 frame = detector.detect(frame)
 
-                # if frame is not None and type(frame) == np.ndarray:
-                #     cv2.imshow("Main", frame)
-                #     if cv2.waitKey(1) == 27:
-                #         break
+                send_back(frame, address)
 
 if __name__ == "__main__":
     run()

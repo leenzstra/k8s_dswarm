@@ -28,7 +28,12 @@ class Detector:
                 # Class Name
                 cls = int(box.cls[0])
 
-                cvzone.putTextRect(frame, f'{Detector.classNames[cls]} {
+                if cls >= len(Detector.classNames):
+                    clsname = 'undefined'
+                else:
+                    clsname = Detector.classNames[cls]
+
+                cvzone.putTextRect(frame, f'{clsname} {
                                    conf}', (max(0, x1), max(35, y1)), scale=1, thickness=1)
 
         return frame
