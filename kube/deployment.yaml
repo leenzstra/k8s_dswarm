@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: serverhub-deployment
+  labels:
+    app: serverhub
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: serverhub
+  template:
+    metadata:
+      labels:
+        app: serverhub
+    spec:
+      containers:
+      - name: serverhub
+        image: server_hub:local
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 4000

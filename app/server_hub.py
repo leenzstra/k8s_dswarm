@@ -34,4 +34,4 @@ if __name__ == '__main__':
     detector = Detector()
     hub = imagezmq.ImageHub(open_port=f"tcp://{args.host}:{args.port_hub}")
 
-    run_simple(args.host, args.port_web, application)
+    run_simple(args.host, int(args.port_web), application)
