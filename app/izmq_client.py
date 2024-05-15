@@ -18,7 +18,7 @@ if __name__ == '__main__':
     time.sleep(2.0)
 
     try:
-        with imagezmq.ImageSender(open_port=f"tcp://{args.host_hub}:{args.port_hub}") as sender:
+        with imagezmq.ImageSender(connect_to=f"tcp://{args.host_hub}:{args.port_hub}") as sender:
             while True:
                 ret, frame = cap.read()
                 jpg_buffer = simplejpeg.encode_jpeg(frame, quality=95,
